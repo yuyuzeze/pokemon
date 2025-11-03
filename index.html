@@ -5,6 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pokemon 卡片相似度搜索</title>
+
+    <!-- Google AdSense 验证代码（替换为你的实际代码） -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3743649878008241"
+        crossorigin="anonymous"></script>
+
     <style>
         * {
             margin: 0;
@@ -278,6 +283,36 @@
             border-color: transparent;
         }
 
+        /* 广告容器样式 */
+        .ad-container {
+            margin: 20px 0;
+            text-align: center;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ad-container.horizontal {
+            width: 100%;
+            max-width: 728px;
+            margin: 20px auto;
+        }
+
+        .ad-container.vertical {
+            width: 100%;
+            max-width: 300px;
+            margin: 20px auto;
+        }
+
+        .ad-label {
+            font-size: 0.75em;
+            color: #999;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
         @media (max-width: 768px) {
             .header h1 {
                 font-size: 1.8em;
@@ -325,6 +360,18 @@
             <div id="apiStatus" class="api-status offline">🔴 检查中...</div>
         </div>
 
+        <!-- 顶部横幅广告 -->
+        <div class="card" style="padding: 20px;">
+            <div class="ad-container horizontal">
+                <!-- 替换为你的广告代码 -->
+                <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-xxxxxxxxxxxxxxxx"
+                    data-ad-slot="1234567890" data-ad-format="auto" data-full-width-responsive="true"></ins>
+                <script>
+                    (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+            </div>
+        </div>
+
         <div class="card">
             <div class="upload-area" id="uploadArea">
                 <div class="upload-icon">📸</div>
@@ -352,6 +399,18 @@
         <div class="card results-section" id="resultsSection">
             <h2 class="results-header" id="resultsHeader">搜索结果：</h2>
             <div class="results-grid" id="resultsGrid"></div>
+        </div>
+
+        <!-- 底部横幅广告 -->
+        <div class="card" style="padding: 20px; margin-top: 30px;">
+            <div class="ad-container horizontal">
+                <!-- 替换为你的广告代码 -->
+                <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-xxxxxxxxxxxxxxxx"
+                    data-ad-slot="0987654321" data-ad-format="auto" data-full-width-responsive="true"></ins>
+                <script>
+                    (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+            </div>
         </div>
 
         <div class="footer">
