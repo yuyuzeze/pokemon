@@ -241,6 +241,43 @@
             opacity: 0.8;
         }
 
+        /* 语言切换器 */
+        .language-switcher {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: white;
+            border-radius: 25px;
+            padding: 8px 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .language-switcher button {
+            background: transparent;
+            border: 2px solid #667eea;
+            color: #667eea;
+            padding: 6px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .language-switcher button:hover {
+            background: #f0f2ff;
+        }
+
+        .language-switcher button.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+        }
+
         @media (max-width: 768px) {
             .header h1 {
                 font-size: 1.8em;
@@ -253,28 +290,51 @@
             .results-grid {
                 grid-template-columns: 1fr;
             }
+
+            .language-switcher {
+                top: 10px;
+                right: 10px;
+                padding: 6px 10px;
+            }
+
+            .language-switcher {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .language-switcher button {
+                padding: 5px 12px;
+                font-size: 0.85em;
+            }
         }
     </style>
 </head>
 
 <body>
+    <!-- 语言切换器 -->
+    <div class="language-switcher">
+        <button id="langZh" onclick="switchLanguage('zh')">中文</button>
+        <button id="langEn" onclick="switchLanguage('en')">English</button>
+        <button id="langJa" onclick="switchLanguage('ja')">日本語</button>
+    </div>
+
     <div class="container">
         <div class="header">
-            <h1>🔍 Pokemon 卡片相似度搜索</h1>
-            <p>上传图片，找到相似的宝可梦卡片</p>
+            <h1 id="title">🔍 Pokemon 卡片相似度搜索</h1>
+            <p id="subtitle">上传图片，找到相似的宝可梦卡片</p>
             <div id="apiStatus" class="api-status offline">🔴 检查中...</div>
         </div>
 
         <div class="card">
             <div class="upload-area" id="uploadArea">
                 <div class="upload-icon">📸</div>
-                <div class="upload-text">点击或拖拽图片到这里</div>
-                <div class="upload-hint">支持 JPG、PNG、BMP 等格式</div>
+                <div class="upload-text" id="uploadText">点击或拖拽图片到这里</div>
+                <div class="upload-hint" id="uploadHint">支持 JPG、PNG、BMP 等格式</div>
                 <input type="file" id="fileInput" accept="image/*">
             </div>
 
             <div class="preview-section" id="previewSection">
-                <h3>预览：</h3>
+                <h3 id="previewTitle">预览：</h3>
                 <img id="previewImage" class="preview-image" alt="预览图片">
                 <br>
                 <button class="search-btn" id="searchBtn">🔍 开始搜索</button>
@@ -282,7 +342,7 @@
 
             <div class="loading" id="loading">
                 <div class="spinner"></div>
-                <p style="margin-top: 15px; color: #667eea;">正在搜索中...</p>
+                <p id="loadingText" style="margin-top: 15px; color: #667eea;">正在搜索中...</p>
             </div>
 
             <div class="message error" id="errorMessage"></div>
@@ -290,16 +350,145 @@
         </div>
 
         <div class="card results-section" id="resultsSection">
-            <h2 class="results-header">搜索结果：</h2>
+            <h2 class="results-header" id="resultsHeader">搜索结果：</h2>
             <div class="results-grid" id="resultsGrid"></div>
         </div>
 
         <div class="footer">
-            <p>Powered by Cloudflare Tunnel & Cloudflare Pages</p>
+            <p id="footerText">Powered by Cloudflare Tunnel & Cloudflare Pages</p>
         </div>
     </div>
 
     <script>
+        // 多语言支持
+        const translations = {
+            zh: {
+                title: '🔍 Pokemon 卡片相似度搜索',
+                subtitle: '上传图片，找到相似的宝可梦卡片',
+                uploadText: '点击或拖拽图片到这里',
+                uploadHint: '支持 JPG、PNG、BMP 等格式',
+                previewTitle: '预览：',
+                searchBtn: '🔍 开始搜索',
+                resultsHeader: '搜索结果：',
+                checking: '🔴 检查中...',
+                online: '🟢 API 在线',
+                offline: '🔴 API 离线',
+                loading: '正在搜索中...',
+                invalidFile: '请选择有效的图片文件',
+                searchSuccess: '找到 {count} 张相似图片！',
+                searchFailed: '搜索失败：未找到相似图片',
+                requestFailed: '请求失败: {error}。请检查网络连接。',
+                footerText: 'Powered by Cloudflare Tunnel & Cloudflare Pages'
+            },
+            en: {
+                title: '🔍 Pokemon Card Similarity Search',
+                subtitle: 'Upload an image to find similar Pokemon cards',
+                uploadText: 'Click or drag image here',
+                uploadHint: 'Supports JPG, PNG, BMP and other formats',
+                previewTitle: 'Preview:',
+                searchBtn: '🔍 Start Search',
+                resultsHeader: 'Search Results:',
+                checking: '🔴 Checking...',
+                online: '🟢 API Online',
+                offline: '🔴 API Offline',
+                loading: 'Searching...',
+                invalidFile: 'Please select a valid image file',
+                searchSuccess: 'Found {count} similar images!',
+                searchFailed: 'Search failed: No similar images found',
+                requestFailed: 'Request failed: {error}. Please check your network connection.',
+                footerText: 'Powered by Cloudflare Tunnel & Cloudflare Pages'
+            },
+            ja: {
+                title: '🔍 ポケモンカード類似度検索',
+                subtitle: '画像をアップロードして、類似のポケモンカードを見つける',
+                uploadText: 'ここをクリックまたは画像をドラッグ',
+                uploadHint: 'JPG、PNG、BMPなどの形式をサポート',
+                previewTitle: 'プレビュー：',
+                searchBtn: '🔍 検索開始',
+                resultsHeader: '検索結果：',
+                checking: '🔴 確認中...',
+                online: '🟢 API オンライン',
+                offline: '🔴 API オフライン',
+                loading: '検索中...',
+                invalidFile: '有効な画像ファイルを選択してください',
+                searchSuccess: '{count} 枚の類似画像が見つかりました！',
+                searchFailed: '検索失敗：類似画像が見つかりませんでした',
+                requestFailed: 'リクエスト失敗: {error}。ネットワーク接続を確認してください。',
+                footerText: 'Powered by Cloudflare Tunnel & Cloudflare Pages'
+            }
+        };
+
+        // 检测浏览器语言
+        function detectBrowserLanguage() {
+            // 获取浏览器语言设置
+            const browserLang = navigator.language || navigator.userLanguage;
+            const langCode = browserLang.toLowerCase().split('-')[0]; // 例如 'ja-JP' -> 'ja'
+
+            // 支持的语言映射
+            const supportedLangs = ['zh', 'en', 'ja'];
+
+            // 如果浏览器语言是支持的语言之一，返回该语言
+            if (supportedLangs.includes(langCode)) {
+                return langCode;
+            }
+
+            // 检查完整的语言代码（例如 zh-CN, ja-JP）
+            if (browserLang.toLowerCase().startsWith('zh')) {
+                return 'zh';
+            } else if (browserLang.toLowerCase().startsWith('ja')) {
+                return 'ja';
+            }
+
+            // 默认返回英文
+            return 'en';
+        }
+
+        // 当前语言（优先使用保存的语言，否则自动检测浏览器语言）
+        const savedLang = localStorage.getItem('pokemon_search_lang');
+        let currentLang = savedLang || detectBrowserLanguage();
+
+        // 语言切换函数
+        function switchLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('pokemon_search_lang', lang);
+            updateLanguage();
+            updateActiveButton();
+        }
+
+        // 更新语言按钮状态
+        function updateActiveButton() {
+            document.getElementById('langZh').classList.toggle('active', currentLang === 'zh');
+            document.getElementById('langEn').classList.toggle('active', currentLang === 'en');
+            document.getElementById('langJa').classList.toggle('active', currentLang === 'ja');
+        }
+
+        // 更新页面语言
+        function updateLanguage() {
+            const t = translations[currentLang];
+
+            document.getElementById('title').textContent = t.title;
+            document.getElementById('subtitle').textContent = t.subtitle;
+            document.getElementById('uploadText').textContent = t.uploadText;
+            document.getElementById('uploadHint').textContent = t.uploadHint;
+            document.getElementById('previewTitle').textContent = t.previewTitle;
+            document.getElementById('searchBtn').textContent = t.searchBtn;
+            document.getElementById('resultsHeader').textContent = t.resultsHeader;
+            document.getElementById('footerText').textContent = t.footerText;
+
+            // 更新加载提示
+            const loadingText = document.getElementById('loadingText');
+            if (loadingText) {
+                loadingText.textContent = t.loading;
+            }
+
+            // 更新 API 状态文本
+            const apiStatus = document.getElementById('apiStatus');
+            const statusText = apiStatus.textContent;
+            if (statusText.includes('检查中') || statusText.includes('Checking') || statusText.includes('確認中')) {
+                apiStatus.textContent = t.checking;
+            }
+        }
+
         // API 配置（写死）
         const API_URL = 'https://api.carddog.site';
         const RESULT_COUNT = 10;
@@ -326,13 +515,13 @@
                 if (response.ok) {
                     const data = await response.json();
                     apiStatus.className = 'api-status online';
-                    apiStatus.textContent = '🟢 API 在线';
+                    apiStatus.textContent = translations[currentLang].online;
                 } else {
                     throw new Error('API 响应异常');
                 }
             } catch (error) {
                 apiStatus.className = 'api-status offline';
-                apiStatus.textContent = '🔴 API 离线';
+                apiStatus.textContent = translations[currentLang].offline;
                 console.warn('API 状态检查失败:', error);
             }
         }
@@ -371,7 +560,7 @@
 
         function handleFile(file) {
             if (!file || !file.type.startsWith('image/')) {
-                showError('请选择有效的图片文件');
+                showError(translations[currentLang].invalidFile);
                 return;
             }
 
@@ -413,13 +602,16 @@
 
                 // 检查返回结果：如果有 results 数组且不为空，则认为成功
                 if (response.ok && result.results && Array.isArray(result.results) && result.results.length > 0) {
-                    showSuccess(`找到 ${result.results.length} 张相似图片！`);
+                    const t = translations[currentLang];
+                    showSuccess(t.searchSuccess.replace('{count}', result.results.length));
                     displayResults(result.results);
                 } else {
-                    showError(result.detail || result.message || '搜索失败：未找到相似图片');
+                    const t = translations[currentLang];
+                    showError(result.detail || result.message || t.searchFailed);
                 }
             } catch (error) {
-                showError(`请求失败: ${error.message}。请检查网络连接。`);
+                const t = translations[currentLang];
+                showError(t.requestFailed.replace('{error}', error.message));
             } finally {
                 loading.style.display = 'none';
                 searchBtn.disabled = false;
@@ -474,6 +666,14 @@
 
         // 页面加载
         window.addEventListener('load', () => {
+            // 初始化语言
+            updateLanguage();
+            updateActiveButton();
+
+            // 初始化 API 状态为检查中
+            document.getElementById('apiStatus').textContent = translations[currentLang].checking;
+
+            // 检查 API 状态
             checkApiStatus();
 
             // 每 30 秒检查一次 API 状态
